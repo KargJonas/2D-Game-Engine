@@ -3,8 +3,8 @@ var cnv = document.getElementById("game"),
     ctx = cnv.getContext("2d", {antialias: true}),
     rows = 9, cols = 13, // Amount of rows and columns in the map
     size = 80, // Size of each texture element
-    map,
-    map_overlay;
+    map, map_overlay,
+    start;
 
 // Temp
 var x, y,
@@ -14,25 +14,31 @@ var x, y,
 var tile1 = document.getElementById("t1"),
     tile2 = document.getElementById("t2"),
     tile3 = document.getElementById("t3"),
-    tile4 = document.getElementById("t4");
+    tile4 = document.getElementById("t4"),
+    tile5 = document.getElementById("t5"),
+    tile6 = document.getElementById("t6");
 
-function map_update () {
+function map_start() {
+    start = new Date();
+}
+
+function map_update() {
     for (x = 0; x < cols; x++) {
         for (y = 0; y < rows; y++) {
-            tile_draw(x, y);
+            tile_set(x, y);
         }
     }
 }
 
-function tile_draw (x, y) {
+function tile_set(x, y) {
     tile_nr = map[y][x]; // Get the tile-nr
-    draw_tile(tile_nr);
+    tile_draw(tile_nr);
 
     tile_nr = map_overlay[y][x]; // Get the tile-overlay-nr
-    draw_tile(tile_nr);
+    tile_draw(tile_nr);
 }
 
-function draw_tile(tile_nr) {
+function tile_draw(tile_nr) {
     switch(tile_nr) {
         case 0:
             break;
@@ -53,10 +59,23 @@ function draw_tile(tile_nr) {
             ctx.drawImage(tile4, x * size, y * size);
             break;
 
+        case 5:
+            ctx.drawImage(tile5, x * size, y * size);
+            break;
+
+        case 6:
+            ctx.drawImage(tile6, x * size, y * size);
+            break;
+
         default:
             console.log("Unknown tile-number on x:", x, "y:", y);
             break;
     }
 }
 
+function millis() {
+    return new Date() - start;
+}
+
+map_start();
 map_update();
