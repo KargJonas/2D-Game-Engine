@@ -11,15 +11,17 @@ var x, y,
     tile_nr;
 
 // Map Tiles
-var tile1 = document.getElementById("t1"),
-    tile2 = document.getElementById("t2"),
-    tile3 = document.getElementById("t3"),
-    tile4 = document.getElementById("t4"),
-    tile5 = document.getElementById("t5"),
-    tile6 = document.getElementById("t6");
+var tile_elems = [ "t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9", "t10", "t11", "t12", "t13", "t14", "t15", "t16", "t17" ],
+    tiles = [];
 
 function map_start() {
     start = new Date();
+    ctx.canvas.width = cols * size;
+    ctx.canvas.height = rows * size;
+    for (var i = 0; i < tile_elems.length; i++) {
+        tiles[i] = document.getElementById(tile_elems[i]);
+    }
+    map_update();
 }
 
 function map_update() {
@@ -32,44 +34,13 @@ function map_update() {
 
 function tile_set(x, y) {
     tile_nr = map[y][x]; // Get the tile-nr
-    tile_draw(tile_nr);
-
+    if (tile_nr > 0 && tile_nr < tile_elems.length + 1) {
+        ctx.drawImage(tiles[tile_nr - 1], x * size, y * size);
+    }
+    
     tile_nr = map_overlay[y][x]; // Get the tile-overlay-nr
-    tile_draw(tile_nr);
-}
-
-function tile_draw(tile_nr) {
-    switch(tile_nr) {
-        case 0:
-            break;
-
-        case 1:
-            ctx.drawImage(tile1, x * size, y * size);
-            break;
-
-        case 2:
-            ctx.drawImage(tile2, x * size, y * size);
-            break;
-
-        case 3:
-            ctx.drawImage(tile3, x * size, y * size);
-            break;
-
-        case 4:
-            ctx.drawImage(tile4, x * size, y * size);
-            break;
-
-        case 5:
-            ctx.drawImage(tile5, x * size, y * size);
-            break;
-
-        case 6:
-            ctx.drawImage(tile6, x * size, y * size);
-            break;
-
-        default:
-            console.log("Unknown tile-number on x:", x, "y:", y);
-            break;
+    if (tile_nr > 0 && tile_nr < tile_elems.length + 1) {
+        ctx.drawImage(tiles[tile_nr - 1], x * size, y * size);
     }
 }
 
@@ -78,4 +49,3 @@ function millis() {
 }
 
 map_start();
-map_update();
