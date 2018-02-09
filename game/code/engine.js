@@ -11,6 +11,7 @@ var cnv = document.getElementById("game"),
 
 // Initiate the game
 function map_start() {
+    // Map
     start = new Date();
     ctx.canvas.width = columns * size;
     ctx.canvas.height = rows * size;
@@ -18,6 +19,10 @@ function map_start() {
         tiles[i] = new Image();
         tiles[i].src = "resources/media/" + (i + 1) + ".png";
     }
+    
+    // Player
+    player.x = ctx.canvas.width / 2;
+    player.y = ctx.canvas.height / 2;
 }
 
 // Set the textures of all tiles
@@ -52,9 +57,13 @@ player.prototype.move = function(x, y) { // X and Y are the added positions
     
     // Keep efficiency in mind!!
     
-    if () {
-        
-    }
+//    if (true) {
+//        
+//    }
+}
+
+player.prototype.display = function() {
+    ctx.ellipse(this.x, this.y, 30, 30);
 }
 
 // Get time passed ( milliseconds )
@@ -62,4 +71,5 @@ function millis() { return new Date() - start; }
 
 map_start();
 window.onload = map_update;
+player.display();
 console.log("Loading time:", millis(), "ms");
