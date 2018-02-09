@@ -5,13 +5,14 @@ var rows = 9,           // Amount of texture-tiles lenghtwise
     tiles_amount = 17;  // Amount of textures in the texture texture folder
 
 // Game settings
-var player_speed = 3;
+var player_speed = 10;
 
 // Some variables
 var cnv = document.getElementById("game"),                      // Canvas
     ctx = cnv.getContext("2d", {antialias: true}),              // Context
     map, map_overlay, walls, start, x, y, tile_nr, tiles = [],  // Map
-    player1;                                                    // Player
+    player1, key_map = {}, temp_speed, temp_pos_x, temp_pos_y,  // Player
+    char_offset = size / 2;
 
 // Initiate the game
 function map_start() {
@@ -21,7 +22,7 @@ function map_start() {
     ctx.canvas.height = rows * size;
     for (var i = 0; i < tiles_amount; i++) {
         tiles[i] = new Image();
-        tiles[i].src = "resources/media/" + (i + 1) + ".png";
+        tiles[i].src = "resources/tiles/" + (i + 1) + ".png";
     }
 
     // Player
@@ -52,20 +53,21 @@ function tile_set(x, y) {
 
 // Player
 function player () {
-    this.x = ctx.canvas.width / 2;
-    this.y = ctx.canvas.height / 2;
+    this.setup = function() {
+        this.x = ctx.canvas.width / 2;
+        this.y = ctx.canvas.height / 2;
+        this.img = new Image();
+        this.img.src = "resources/chars/1.png";
+    }
 
     this.display = function() {
-        ctx.fillRect(this.x, this.y, 30, 30);
+        // ctx.fillRect(this.x, this.y, 30, 30);
+        ctx.drawImage(this.img, this.x - char_offset, this.y - char_offset);
     }
 
     this.move = function(x, y) {
-        // this.x += x;  // We'll have to check first if the spot we want to go
-        // this.y += y;  // isn't blocked
-        // Keep efficiency in mind!!
-        this.x = parseInt(this.x) + x;
-        this.y = parseInt(this.y) + y;
-        console.log(this.x, this.y);
+        this.x = this.x + x;
+        this.y = this.y + y;
     }
 }
 
@@ -73,29 +75,57 @@ function player () {
 function millis() { return new Date() - start; }
 
 // Keyboard input
-document.addEventListener('keydown', function(event) {
+onkeydown = onkeyup = function(e){
     // W = 87
     // A = 65
     // S = 83
     // D = 68
-    // console.log(event.keyCode, "was pressed");
 
-    if (event.keyCode == 87) {
-        player1.move(0, -player_speed);
-    } else if (event.keyCode == 83) {
-        player1.move(0, player_speed);
+    // Map multiple keys at once
+    e = e || event;
+    key_map[e.keyCode] = e.type == 'keydown';
+
+    // Anti-speeding on diagonal walk
+    if ((key_map[87] || key_map[83]) && (key_map[65] || key_map[68])) {
+        temp_speed = player_speed / 1.5;
+    } else {
+        temp_speed = player_speed;
     }
 
-    if (event.keyCode == 65) {
-        player1.move(-player_speed, 0);
-    } else if (event.keyCode == 68) {
-        player1.move(player_speed, 0);
+    // Colision detection
+    if (key_map[87]) {
+        temp_pos_x = Math.floor(player1.x / size);
+        temp_pos_y = Math.floor((player1.y - temp_speed) / size);
+        if (walls[temp_pos_y][temp_pos_x] == 0) {
+            player1.move(0, -temp_speed);
+        }
+    } else if (key_map[83]) {
+        temp_pos_x = Math.floor(player1.x / size);
+        temp_pos_y = Math.floor((player1.y + temp_speed) / size);
+        if (walls[temp_pos_y][temp_pos_x] == 0) {
+            player1.move(0, temp_speed);
+        }
+    }
+
+    if (key_map[65]) {
+        temp_pos_x = Math.floor((player1.x - temp_speed) / size);
+        temp_pos_y = Math.floor(player1.y / size);
+        if (walls[temp_pos_y][temp_pos_x] == 0) {
+            player1.move(-temp_speed, 0);
+        }
+    } else if (key_map[68]) {
+        temp_pos_x = Math.floor((player1.x + temp_speed) / size);
+        temp_pos_y = Math.floor(player1.y / size);
+        if (walls[temp_pos_y][temp_pos_x] == 0) {
+            player1.move(temp_speed, 0);
+        }
     }
 
     map_update();
     player1.display();
-});
+}
 
 map_start();
+player1.setup();
 window.onload = map_update;
 console.log("Loading time:", millis(), "ms");
