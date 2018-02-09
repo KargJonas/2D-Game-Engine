@@ -2,17 +2,18 @@
 var rows = 9,           // Amount of texture-tiles lenghtwise
     columns = 13,       // Amount of texture-tiles heightwise
     size = 80,          // Resolution of the tiles ( pixels )
-    tiles_amount = 17;  // Amount of textures in the texture texture folder
+    tiles_amount = 17,  // Amount of textures in the texture texture folder
+    animation_speed = 200;
 
 // Game settings
 var player_speed = 10;
 
 // Some variables
 var cnv = document.getElementById("game"),                      // Canvas
-    ctx = cnv.getContext("2d", {antialias: true}),              // Context
+    ctx = cnv.getContext("2d", {antialias: true}),              // Context ( Canvas )
     map, map_overlay, walls, start, x, y, tile_nr, tiles = [],  // Map
     player1, key_map = {}, temp_speed, temp_pos_x, temp_pos_y,  // Player
-    char_offset = size / 2;
+    char_offset = size / 2, animation_frame = 0, walk_frame = 0;
 
 // Initiate the game
 function map_start() {
@@ -27,6 +28,7 @@ function map_start() {
 
     // Player
     player1 = new player();
+    player1.setup();
 }
 
 // Set the textures of all tiles
@@ -53,11 +55,17 @@ function tile_set(x, y) {
 
 // Player
 function player () {
+    // Initiate the character
     this.setup = function() {
         this.x = ctx.canvas.width / 2;
         this.y = ctx.canvas.height / 2;
+        this.walk_frames = [];
+        for (var i = 0; i < king.length; i++) {
+            this.walk_frames[i] = new Image();
+            this.walk_frames[i].src = "";
+        }
         this.img = new Image();
-        this.img.src = "resources/chars/1.png";
+        this.img.src = "resources/chars/king/1.png";
     }
 
     this.display = function() {
@@ -66,8 +74,8 @@ function player () {
     }
 
     this.move = function(x, y) {
-        this.x = this.x + x;
-        this.y = this.y + y;
+        this.x = parseInt(this.x + x);
+        this.y = parseInt(this.y + y);
     }
 }
 
@@ -75,12 +83,8 @@ function player () {
 function millis() { return new Date() - start; }
 
 // Keyboard input
-onkeydown = onkeyup = function(e){
-    // W = 87
-    // A = 65
-    // S = 83
-    // D = 68
-
+onkeydown = onkeyup = function(e) {
+    walk_frame++;
     // Map multiple keys at once
     e = e || event;
     key_map[e.keyCode] = e.type == 'keydown';
@@ -93,13 +97,13 @@ onkeydown = onkeyup = function(e){
     }
 
     // Colision detection
-    if (key_map[87]) {
+    if (key_map[87]) { // W
         temp_pos_x = Math.floor(player1.x / size);
         temp_pos_y = Math.floor((player1.y - temp_speed) / size);
         if (walls[temp_pos_y][temp_pos_x] == 0) {
             player1.move(0, -temp_speed);
         }
-    } else if (key_map[83]) {
+    } else if (key_map[83]) { // A
         temp_pos_x = Math.floor(player1.x / size);
         temp_pos_y = Math.floor((player1.y + temp_speed) / size);
         if (walls[temp_pos_y][temp_pos_x] == 0) {
@@ -107,25 +111,24 @@ onkeydown = onkeyup = function(e){
         }
     }
 
-    if (key_map[65]) {
+    if (key_map[65]) { // S
         temp_pos_x = Math.floor((player1.x - temp_speed) / size);
         temp_pos_y = Math.floor(player1.y / size);
         if (walls[temp_pos_y][temp_pos_x] == 0) {
             player1.move(-temp_speed, 0);
         }
-    } else if (key_map[68]) {
+    } else if (key_map[68]) { // D
         temp_pos_x = Math.floor((player1.x + temp_speed) / size);
         temp_pos_y = Math.floor(player1.y / size);
         if (walls[temp_pos_y][temp_pos_x] == 0) {
             player1.move(temp_speed, 0);
         }
     }
-
     map_update();
     player1.display();
 }
 
 map_start();
-player1.setup();
 window.onload = map_update;
+setInterval(map_update, animation_speed);
 console.log("Loading time:", millis(), "ms");
