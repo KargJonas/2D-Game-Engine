@@ -4,6 +4,9 @@ var rows = 9,           // Amount of texture-tiles lenghtwise
     size = 80,          // Resolution of the tiles ( pixels )
     tiles_amount = 17;  // Amount of textures in the texture texture folder
 
+// Game settings
+var player_speed = 3;
+
 // Some variables
 var cnv = document.getElementById("game"),                      // Canvas
     ctx = cnv.getContext("2d", {antialias: true}),              // Context
@@ -56,12 +59,13 @@ function player () {
         ctx.fillRect(this.x, this.y, 30, 30);
     }
 
-    this.move = function() {
+    this.move = function(x, y) {
         // this.x += x;  // We'll have to check first if the spot we want to go
         // this.y += y;  // isn't blocked
         // Keep efficiency in mind!!
-        this.x += x;
-        this.y += y;
+        this.x = parseInt(this.x) + x;
+        this.y = parseInt(this.y) + y;
+        console.log(this.x, this.y);
     }
 }
 
@@ -76,27 +80,18 @@ document.addEventListener('keydown', function(event) {
     // D = 68
     // console.log(event.keyCode, "was pressed");
 
-    switch (event.keyCode) {
-        case 87:
-            console.log(event.keyCode, "was pressed");
-            player1.move(0, -1);
-            break;
-
-        case 65:
-            console.log(event.keyCode, "was pressed");
-            player1.move(-1, 0);
-            break;
-
-        case 83:
-            console.log(event.keyCode, "was pressed");
-            player1.move(0, 1);
-            break;
-
-        case 68:
-            console.log(event.keyCode, "was pressed");
-            player1.move(1, 0);
-            break;
+    if (event.keyCode == 87) {
+        player1.move(0, -player_speed);
+    } else if (event.keyCode == 83) {
+        player1.move(0, player_speed);
     }
+
+    if (event.keyCode == 65) {
+        player1.move(-player_speed, 0);
+    } else if (event.keyCode == 68) {
+        player1.move(player_speed, 0);
+    }
+
     map_update();
     player1.display();
 });
