@@ -5,9 +5,10 @@ var rows = 9,           // Amount of texture-tiles lenghtwise
     tiles_amount = 17;  // Amount of textures in the texture texture folder
 
 // Some variables
-var cnv = document.getElementById("game"),
-    ctx = cnv.getContext("2d", {antialias: true}),
-    map, map_overlay, walls, start, x, y, tile_nr, tiles = [];
+var cnv = document.getElementById("game"),                      // Canvas
+    ctx = cnv.getContext("2d", {antialias: true}),              // Context
+    map, map_overlay, walls, start, x, y, tile_nr, tiles = [],  // Map
+    player1;                                                    // Player
 
 // Initiate the game
 function map_start() {
@@ -19,10 +20,9 @@ function map_start() {
         tiles[i] = new Image();
         tiles[i].src = "resources/media/" + (i + 1) + ".png";
     }
-    
+
     // Player
-    player.x = ctx.canvas.width / 2;
-    player.y = ctx.canvas.height / 2;
+    player1 = new player();
 }
 
 // Set the textures of all tiles
@@ -32,6 +32,7 @@ function map_update() {
             tile_set(x, y);
         }
     }
+    player1.display();
 }
 
 // Set the texture of a tile
@@ -48,28 +49,58 @@ function tile_set(x, y) {
 
 // Player
 function player () {
-    var x, y;
-}
+    this.x = ctx.canvas.width / 2;
+    this.y = ctx.canvas.height / 2;
 
-player.prototype.move = function(x, y) { // X and Y are the added positions
-    // this.x += x;  // We'll have to check first if the spot we want to go
-    // this.x += y;  // isn't blocked.
-    
-    // Keep efficiency in mind!!
-    
-//    if (true) {
-//        
-//    }
-}
+    this.display = function() {
+        ctx.fillRect(this.x, this.y, 30, 30);
+    }
 
-player.prototype.display = function() {
-    ctx.ellipse(this.x, this.y, 30, 30);
+    this.move = function() {
+        // this.x += x;  // We'll have to check first if the spot we want to go
+        // this.y += y;  // isn't blocked
+        // Keep efficiency in mind!!
+        this.x += x;
+        this.y += y;
+    }
 }
 
 // Get time passed ( milliseconds )
 function millis() { return new Date() - start; }
 
+// Keyboard input
+document.addEventListener('keydown', function(event) {
+    // W = 87
+    // A = 65
+    // S = 83
+    // D = 68
+    // console.log(event.keyCode, "was pressed");
+
+    switch (event.keyCode) {
+        case 87:
+            console.log(event.keyCode, "was pressed");
+            player1.move(0, -1);
+            break;
+
+        case 65:
+            console.log(event.keyCode, "was pressed");
+            player1.move(-1, 0);
+            break;
+
+        case 83:
+            console.log(event.keyCode, "was pressed");
+            player1.move(0, 1);
+            break;
+
+        case 68:
+            console.log(event.keyCode, "was pressed");
+            player1.move(1, 0);
+            break;
+    }
+    map_update();
+    player1.display();
+});
+
 map_start();
 window.onload = map_update;
-player.display();
 console.log("Loading time:", millis(), "ms");
