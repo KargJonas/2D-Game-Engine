@@ -1,34 +1,92 @@
+/*  A 2D-Game-library by Jonas Karg 2018
+ *
+ *  This library was designed for top-down
+ *  games but it can be used for a lot of
+ *  different stuff (e.g.P platformers, etc..)
+ *
+ *  It provides the ability to load maps from
+ *  2-dimensional arrays ("map" and "map_overlay")
+ *  with the numbers of the corresponding images
+ *  in folders, you specefy. The map is then
+ *  loaded into a grid of "tiles". Its possible
+ *  to have multiple layers of texture.
+ *
+ *  The textures in the texture-folders have to
+ *  be named cronologically in numbers.
+ *  (e.g.: 1.png, 2.png, 3.png, ...)
+ *  No number should be skippen otherwise an
+ *  error will occur.
+ *
+ *  In the "walls" array you can say, which
+ *  "tiles" are able to be passed by the
+ *  player. ("00" for passable "01" for
+ *  non-passable) (Collider)
+ *
+ *  players, characters and NPCs can be created
+ *  with the following code:
+ *  
+ *  yourPlayerName = new player();
+ *  yourPlayerName.setup(ctx.canvas.width / 2, ctx.canvas.height / 2);
+ *  yourPlayerName.player_walk = [3, 4];
+ *
+ *  The parameters in the yourPlayerName.setup
+ *  function is the position, where the player
+ *  will be spawned by default.
+ *  The variable "yourPlayerName.player_walk" is the array of
+ *  frames used for the player-animation when walking.
+ *  You can add as many as you want.
+ *  The variable "yourPlayerName.player_char" is the array of
+ *  frames used for the player-animation in idle.
+ *  You can add as many as you want.
+ *
+ *  You have to preset some stuff in the "Settings" below.
+ *  You can play around in the "Game Settings" if you wish to.
+ */
+
 // Settings
-var rows = 9,           // Amount of texture-tiles lenghtwise
-    columns = 13,       // Amount of texture-tiles heightwise
-    size = 80,          // Resolution of the tiles ( pixels )
-    tiles_amount = 17,  // Amount of textures in the texture texture folder
-    animation_speed = 200;
+const rows = 9,                           // Amount of texture-tiles lenghtwise
+      columns = 13,                       // Amount of texture-tiles heightwise
+      size = 80,                          // Resolution of the tiles ( pixels )
+      animation_speed = 200,              // Speed of animation-clock
+      tile_path = "resources/tiles/",     // Path of tile-textures
+      char_path = "resources/chars/",     // Path of char-tectures
+      chars_amount = 4;                   // Amount of textures in the char-folder
 
 // Game settings
-var player_speed = 10;
+const player_speed = 10,
+      show_loadtime = true;
 
 // Some variables
-var cnv = document.getElementById("game"),                      // Canvas
-    ctx = cnv.getContext("2d", {antialias: true}),              // Context ( Canvas )
-    map, map_overlay, walls, start, x, y, tile_nr, tiles = [],  // Map
-    player1, key_map = {}, temp_speed, temp_pos_x, temp_pos_y,  // Player
-    char_offset = size / 2, animation_frame = 0, walk_frame = 0;
+var cnv = document.getElementById("game"),
+    ctx = cnv.getContext("2d", {antialias: true}),
+    map, map_overlay, walls,
+    tiles_amount,
+    start, x, y,
+    tile_nr, tiles = [],
+    player1,
+    key_map = {},
+    temp_speed, temp_pos_x, temp_pos_y,
+    player_char,
+    char_offset = size / 2,
+    animation_frame = 0,
+    walk_frame = 0, walk_last;
 
 // Initiate the game
 function map_start() {
-    // Map
-    start = new Date();
+    start = new Date(); // Has to be first to execute
+    // tiles_amount = require('fs').readdir(tile_path, (err, files) => { return files.length });
+    // chars_amount = require('fs').readdir(char_path, (err, files) => { return files.length });
+    tiles_amount = Math.max(...([].concat([].concat(...map), [].concat(...map_overlay)))); // Get the amount of textures
+    // chars_amount = Math.max(...([].concat([].concat(...player_char), [].concat(...player_walk)))); 
     ctx.canvas.width = columns * size;
     ctx.canvas.height = rows * size;
     for (var i = 0; i < tiles_amount; i++) {
         tiles[i] = new Image();
-        tiles[i].src = "resources/tiles/" + (i + 1) + ".png";
+        tiles[i].src = tile_path + (i + 1) + ".png";
     }
 
-    // Player
-    player1 = new player();
-    player1.setup();
+    // Set up characters/animations
+    if (typeof animate_setup === "function") { animate_setup(); }
 }
 
 // Set the textures of all tiles
@@ -38,7 +96,9 @@ function map_update() {
             tile_set(x, y);
         }
     }
-    player1.display();
+    
+    // Update animations
+    if (typeof animate_update === "function") { animate_update(); }
 }
 
 // Set the texture of a tile
@@ -55,37 +115,44 @@ function tile_set(x, y) {
 
 // Player
 function player () {
-    // Initiate the character
-    this.setup = function() {
-        this.x = ctx.canvas.width / 2;
-        this.y = ctx.canvas.height / 2;
-        this.walk_frames = [];
-        for (var i = 0; i < king.length; i++) {
-            this.walk_frames[i] = new Image();
-            this.walk_frames[i].src = "";
+    this.frame = 0;
+    this.imgs = [];
+    this.player_char = [];
+    this.player_walk = [];
+
+    this.setup = function(x, y) {
+        this.x = x;
+        this.y = y;
+
+        for (var i = 0; i < chars_amount; i++) {
+            this.imgs[i] = new Image();
+            this.imgs[i].src = char_path + (i + 1) + ".png";
         }
-        this.img = new Image();
-        this.img.src = "resources/chars/king/1.png";
+    }
+
+    this.animate = function() {
+        this.frame++;
+        if (this.frame > this.player_char.length - 1) { this.frame = 0; }
     }
 
     this.display = function() {
-        // ctx.fillRect(this.x, this.y, 30, 30);
-        ctx.drawImage(this.img, this.x - char_offset, this.y - char_offset);
+        if (millis() - walk_last < 300) {
+            ctx.drawImage(this.imgs[this.player_walk[this.frame] - 1], this.x - char_offset, this.y - char_offset);
+        } else {
+            ctx.drawImage(this.imgs[this.player_char[this.frame] - 1], this.x - char_offset, this.y - char_offset);
+        }
     }
 
     this.move = function(x, y) {
         this.x = parseInt(this.x + x);
         this.y = parseInt(this.y + y);
+        walk_last = millis();
     }
 }
 
-// Get time passed ( milliseconds )
-function millis() { return new Date() - start; }
-
-// Keyboard input
+// *** Keyboard input ***
 onkeydown = onkeyup = function(e) {
     walk_frame++;
-    // Map multiple keys at once
     e = e || event;
     key_map[e.keyCode] = e.type == 'keydown';
 
@@ -125,10 +192,12 @@ onkeydown = onkeyup = function(e) {
         }
     }
     map_update();
-    player1.display();
 }
+
+// Get time passed ( milliseconds )
+function millis() { return new Date() - start; }
 
 map_start();
 window.onload = map_update;
+if (show_loadtime) { console.log("Loading time:", millis(), "ms"); }
 setInterval(map_update, animation_speed);
-console.log("Loading time:", millis(), "ms");
