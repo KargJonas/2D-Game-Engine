@@ -44,8 +44,8 @@
  */
 
 // Settings
-const rows = 11,                          // Amount of texture-tiles lenghtwise
-      columns = 24,                       // Amount of texture-tiles heightwise
+const rows = 9,                          // Amount of texture-tiles lenghtwise
+      columns = 13,                       // Amount of texture-tiles heightwise
       size = 80,                          // Resolution of the tiles ( pixels )
       animation_speed = 200,              // Speed of animation-clock
       tile_path = "resources/tiles/",     // Path of tile-textures
@@ -60,7 +60,7 @@ const player_speed = 10,
 // Some variables
 var cnv = document.getElementById("game"),
     ctx = cnv.getContext("2d", {antialias: true}),
-    map, map_overlay, walls,
+    map, map_animations, map_overlay, walls,
     tiles_amount,
     start, x, y,
     tile_nr, tiles = [],
@@ -75,11 +75,8 @@ var cnv = document.getElementById("game"),
 
 // Initiate the game
 function map_start() {
-    start = new Date(); // Has to be first to execute
-    // tiles_amount = require('fs').readdir(tile_path, (err, files) => { return files.length });
-    // chars_amount = require('fs').readdir(char_path, (err, files) => { return files.length });
+    start = new Date(); // Has to be first to executes
     tiles_amount = Math.max(...([].concat([].concat(...map), [].concat(...map_overlay)))); // Get the amount of textures
-    // chars_amount = Math.max(...([].concat([].concat(...animate_idle), [].concat(...animate_walk)))); 
     ctx.canvas.width = columns * size;
     ctx.canvas.height = rows * size;
     for (var i = 0; i < tiles_amount; i++) {
@@ -147,64 +144,26 @@ function animation () {
         }
     }
 
-    this.move = function(x, y) {
-        this.x = parseInt(this.x + x);
-        this.y = parseInt(this.y + y);
-        walk_last = millis();
-    }
-}
-
-// *** Keyboard input ***
-//onkeydown = function(e) {
-//    
-//}
-//
-//onkeyup = function(e) {
-//    
-//}
-
-onkeydown = onkeyup = function(e) {
-    key = e;
-    walk_frame++;
-    e = e || event;
-    key_map[e.keyCode] = e.type == 'keydown';
-
-    // Anti-speeding on diagonal walk
-    if ((key_map[87] || key_map[83]) && (key_map[65] || key_map[68])) {
-        temp_speed = player_speed / 1.5;
-    } else {
-        temp_speed = player_speed;
+    // Movement
+    this.move = function(x, y, mode) {
+        if (mode) {
+            this.x = parseInt(x);  // gotta be int otherwise, the image could be
+            this.y = parseInt(y);  // displayed on half a pixel => blurred image
+        } else {
+            this.x = parseInt(this.x + x);
+            this.y = parseInt(this.y + y);
+        }
+        walk_last = millis();  // for walk animation
     }
 
     // Colision detection
-    if (key_map[87]) { // W
-        temp_pos_x = Math.floor(player1.x / size);
-        temp_pos_y = Math.floor((player1.y - temp_speed) / size);
+    this.move_collider = function(x, y) {
+        temp_pos_x = Math.floor((this.x + x) / size);
+        temp_pos_y = Math.floor((this.y + y) / size);
         if (walls[temp_pos_y][temp_pos_x] == 0) {
-            player1.move(0, -temp_speed);
-        }
-    } else if (key_map[83]) { // A
-        temp_pos_x = Math.floor(player1.x / size);
-        temp_pos_y = Math.floor((player1.y + temp_speed) / size);
-        if (walls[temp_pos_y][temp_pos_x] == 0) {
-            player1.move(0, temp_speed);
+            this.move(x, y, false);
         }
     }
-
-    if (key_map[65]) { // S
-        temp_pos_x = Math.floor((player1.x - temp_speed) / size);
-        temp_pos_y = Math.floor(player1.y / size);
-        if (walls[temp_pos_y][temp_pos_x] == 0) {
-            player1.move(-temp_speed, 0);
-        }
-    } else if (key_map[68]) { // D
-        temp_pos_x = Math.floor((player1.x + temp_speed) / size);
-        temp_pos_y = Math.floor(player1.y / size);
-        if (walls[temp_pos_y][temp_pos_x] == 0) {
-            player1.move(temp_speed, 0);
-        }
-    }
-    map_update();
 }
 
 // Get time passed ( milliseconds )

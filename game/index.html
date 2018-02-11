@@ -1,29 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
+    <head lang="en">
         <meta charset="UTF-8">
-        <title>Start</title>
+        <title>Game</title>
+        <meta content="HTML test for a 2D game library by Jonas Karg">
+        <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
     </head>
-    <body>
-        <center>
-            <h1 style="font-family: monospace; font-size: 80px;">
-                Start
-            </h1>
-            <br><br>
-            <p style="padding: 0% 20%; font-size: 24px;">
-                eruditionem cernantur efflorescere arbitror o ingeniis quem ea te summis nam 
-                fabulas ab ita tempor magna ne anim sunt voluptate sed arbitror dolor ipsum 
-                dolore appellat vidisse varias familiaritatem concursionibus cohaerescant dolor 
-                arbitror aute possumus eram cohaerescant cernantur exquisitaque voluptatibus 
-                consectetur fore offendit admodum labore cernantur relinqueret appellat duis 
-                quis incurreret eiusmod litteris vidisse sempiternum dolore irure concursionibus 
-                arbitror doctrina dolor tempor laboris cohaerescant cohaerescant coniunctione 
-                qui laborum doctrina praetermissum illum iudicem amet excepteur ab cernantur est 
-                de quo ex graviterque iis imitarentur despicationes iis magna laborum do 
-                mentitum noster quamquam eruditionem reprehenderit arbitror an exquisitaque ex 
-                hic eram probant
-            </p>
-            <input type="button" value="Play" style="font-size: 30px;" onclick="window.location.href='game.html'">
-        </center>
+    <body style="padding: 0%; margin: 0%; background-color: #111; overflow: hidden;">
+        <!-- Game -->
+        <center><canvas id="game" width="1920" height="1080"></canvas></center>
+
+        <!-- JS -->
+        <script type="text/javascript" src="code/maps/map1.js"></script>
+        <script type="text/javascript" src="code/game.js"></script>
+        <script type="text/javascript" src="code/engine.js"></script>
     </body>
 </html>
