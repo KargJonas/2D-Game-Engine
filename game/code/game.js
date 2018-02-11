@@ -36,23 +36,34 @@
  *  according to the "walls" array in the loaded map.
  */
 
+// Animations
+animations = [
+    [220, 200, 5, 6],
+    [800, 200, 6, 5],
+    [700, 100, 5, 6],
+    [750, 090, 6, 5],
+    [500, 600, 5, 6]
+];
+
 function animate_setup() {
-    player1 = new animation();
+    player1 = new char();
     player1.setup(ctx.canvas.width / 2, ctx.canvas.height / 2);
-    player1.animate_idle = [1, 2];   // The standart-animation in idle
-    player1.animate_walk = [3, 4];   // A walking animation
+    player1.frames_idle = [1, 2];   // The standart-animation in idle
+    player1.frames_walk = [3, 4];   // A walking animation
 }
 
 function animate_update() {
     player1.animate();  // Animate
     player1.display();  // Show on screen
-}
-
-function move_collider() {
     
+    for (var i = 0; i < animations.length; i++) {
+        anims[i].animate();
+        anims[i].display();
+    }
 }
 
 // Multiple keypresses
+// ( WASD control )
 onkeydown = onkeyup = function(e) {
     key = e;
     walk_frame++;
@@ -72,7 +83,7 @@ onkeydown = onkeyup = function(e) {
     } else if (key_map[83]) { // A
         player1.move_collider(0, temp_speed);
     }
-    
+
     if (key_map[65]) { // S
         player1.move_collider(-temp_speed, 0);
     } else if (key_map[68]) { // D

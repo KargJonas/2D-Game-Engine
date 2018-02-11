@@ -27,15 +27,15 @@
  *  
  *  yourPlayerName = new player();
  *  yourPlayerName.setup(ctx.canvas.width / 2, ctx.canvas.height / 2);
- *  yourPlayerName.animate_walk = [3, 4];
+ *  yourPlayerName.frames_walk = [3, 4];
  *
  *  The parameters in the yourPlayerName.setup
  *  function is the position, where the player
  *  will be spawned by default.
- *  The variable "yourPlayerName.animate_walk" is the array of
+ *  The variable "yourPlayerName.frames_walk" is the array of
  *  frames used for the player-animation when walking.
  *  You can add as many as you want.
- *  The variable "yourPlayerName.animate_idle" is the array of
+ *  The variable "yourPlayerName.frames_idle" is the array of
  *  frames used for the player-animation in idle.
  *  You can add as many as you want.
  *
@@ -50,11 +50,11 @@ const rows = 9,                          // Amount of texture-tiles lenghtwise
       animation_speed = 200,              // Speed of animation-clock
       tile_path = "resources/tiles/",     // Path of tile-textures
       char_path = "resources/anims/",     // Path of char-tectures
-      chars_amount = 4;                   // Amount of textures in the char-folder
+      chars_amount = 6;                   // Amount of textures in the char-folder
 
 // Game settings
 const player_speed = 10,
-      show_load_time = true,
+      show_load_time = false,
       show_custom_error = true;
 
 // Some variables
@@ -67,11 +67,11 @@ var cnv = document.getElementById("game"),
     player1,
     key_map = {},
     temp_speed, temp_pos_x, temp_pos_y,
-    animate_idle,
+    frames_idle,
     char_offset = size / 2,
     animation_frame = 0,
     walk_frame = 0, walk_last,
-    key;
+    key, animations, anims = [];
 
 // Initiate the game
 function map_start() {
@@ -83,9 +83,19 @@ function map_start() {
         tiles[i] = new Image();
         tiles[i].src = tile_path + (i + 1) + ".png";
     }
-
     // Set up characters/animations
-    if (typeof animate_setup === "function") { animate_setup(); }
+    if (typeof animate_setup === "function") {
+        // Setting up animations
+        for (var i = 0; i < animations.length; i++) {
+            anims[i] = new animation();
+            anims[i].setup(animations[i][0], animations[i][1]);
+            for (var a = 0; a < animations[i].length - 2; a++) {
+                anims[i].frame_pattern[a] = animations[i][a + 2];
+            }
+        }
+        // Chars need to be done by the user
+        animate_setup();
+    }
 }
 
 // Set the textures of all tiles
@@ -95,7 +105,6 @@ function map_update() {
             tile_set(x, y);
         }
     }
-
     // Update animations
     if (typeof animate_update === "function") {
         animate_update();
@@ -114,13 +123,13 @@ function tile_set(x, y) {
     }
 }
 
-// Player
-function animation () {
-    this.frame = 0;
+// Char-Animations
+function char() {
+    this.idle_frame = 0;
+    this.walk_frame = 0;
+    this.frames_idle = [];
+    this.frames_walk = [];
     this.imgs = [];
-    this.animate_idle = [];
-    this.animate_walk = [];
-
     this.setup = function(x, y) {
         this.x = x;
         this.y = y;
@@ -130,20 +139,19 @@ function animation () {
             this.imgs[i].src = char_path + (i + 1) + ".png";
         }
     }
-
     this.animate = function() {
-        this.frame++;
-        if (this.frame > this.animate_idle.length - 1) { this.frame = 0; }
+        this.idle_frame++;
+        this.walk_frame++;
+        if (this.idle_frame > this.frames_idle.length - 1) { this.idle_frame = 0; }
+        if (this.walk_frame > this.frames_walk.length - 1) { this.walk_frame = 0; }
     }
-
     this.display = function() {
         if (millis() - walk_last < 300) {
-            ctx.drawImage(this.imgs[this.animate_walk[this.frame] - 1], this.x - char_offset, this.y - char_offset);
+            ctx.drawImage(this.imgs[this.frames_walk[this.walk_frame] - 1], this.x - char_offset, this.y - char_offset);
         } else {
-            ctx.drawImage(this.imgs[this.animate_idle[this.frame] - 1], this.x - char_offset, this.y - char_offset);
+            ctx.drawImage(this.imgs[this.frames_idle[this.idle_frame] - 1], this.x - char_offset, this.y - char_offset);
         }
     }
-
     // Movement
     this.move = function(x, y, mode) {
         if (mode) {
@@ -155,7 +163,6 @@ function animation () {
         }
         walk_last = millis();  // for walk animation
     }
-
     // Colision detection
     this.move_collider = function(x, y) {
         temp_pos_x = Math.floor((this.x + x) / size);
@@ -166,10 +173,32 @@ function animation () {
     }
 }
 
+// Animation
+function animation () {
+    this.frame = 0;
+    this.frames = [];
+    this.frame_pattern = [];
+    this.setup = function(x, y) {
+        this.x = x;
+        this.y = y;
+        for (var i = 0; i < chars_amount; i++) {
+            this.frames[i] = new Image();
+            this.frames[i].src = char_path + (i + 1) + ".png";
+        }
+    }
+    this.animate = function() {
+        this.frame++;
+        if (this.frame > this.frame_pattern.length - 1) { this.frame = 0; }
+    }
+    this.display = function() {
+        ctx.drawImage(this.frames[this.frame_pattern[this.frame] - 1], this.x, this.y);
+    }
+}
+
 // Get time passed ( milliseconds )
 function millis() { return new Date() - start; }
 
 map_start();
 window.onload = map_update;
-if (show_load_time) { console.log("Loading time:", millis(), "ms"); }
+if (show_load_time) { console.log("Loading-time:", millis(), "ms"); }
 setInterval(map_update, animation_speed);
