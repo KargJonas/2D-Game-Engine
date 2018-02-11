@@ -12,3 +12,6 @@ But it can be configured for basically anyting. (e.g. a plattformer, etc..)
 <hr>
 
 **This library is nowhere near to completion, so don't expect too much of it..**
+
+See the 11.01.2018 version here:
+http://webspot.ddns.me/game/
