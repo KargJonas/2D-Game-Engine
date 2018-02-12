@@ -48,20 +48,30 @@ animations = [
 ];
 
 function setup() {
+    // Remember to set the animation-textures mount !!!
     dustAndGreen.load_map();
 
-    player1 = new char();
-    player1.setup(520, 270);
-    player1.frames_idle = [1, 2];   // The standart-animation in idle
-    player1.frames_walk = [3, 4];   // A walking animation
+    player = new char();
+    player.setup(520, 270);
+    player.frames_idle = [1, 2];   // The standart-animation in idle
+    player.frames_walk = [3, 4];   // A walking animation
+
+    sheep = new char();
+    sheep.setup(200, 200);
+    sheep.frames_idle = [7];
+    sheep.frames_walk = [8, 9];
+    
+    console.log(sheep);
 }
 
 function animate_update() {
-    player1.animate();  // Animate
+    player.animate();  // Animate
+    sheep.animate();
 }
 
 function update() {
-    player1.display();  // Show on screen
+    sheep.display();
+    player.display();  // Show on screen (Should be last in order to be in front)
 
     // Anti-speeding on diagonal walk
     // if ((key_map[87] || key_map[83]) && (key_map[65] || key_map[68])) {
@@ -72,14 +82,14 @@ function update() {
 
     // WASD events
     if (key_map[87]) { // W
-        player1.move_collider(0, -player_speed);
+        player.move_collider(0, -player_speed);
     } else if (key_map[83]) { // S
-        player1.move_collider(0, player_speed);
+        player.move_collider(0, player_speed);
     }
 
     if (key_map[65]) { // A
-        player1.move_collider(-player_speed, 0);
+        player.move_collider(-player_speed, 0);
     } else if (key_map[68]) { // D
-        player1.move_collider(player_speed, 0);
+        player.move_collider(player_speed, 0);
     }
 }

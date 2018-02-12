@@ -51,7 +51,7 @@ const canvas_id = "game", // The name of HTML-Canvas element we are drawing on
       animation_speed = 50, // Speed of animation-clock ( the smaller the number - the faster )
       tile_path = "resources/tiles/",   // Path of tile-textures
       char_path = "resources/anims/",   // Path of char-tectures
-      chars_amount = 6, // Amount of textures in the char-folder
+      chars_amount = 9, // Amount of textures in the char-folder
       update_speed = 1; // The time between refreshing map, etc..
 
 // Game settings
@@ -141,7 +141,7 @@ function map_template() {
     }
 }
 
-// Char-Animations
+// Char-Class
 function char() {
     this.idle_frame = 0;
     this.walk_frame = 0;
@@ -228,7 +228,7 @@ onkeypress = function() {
 function millis() { return new Date() - start; }
 
 // Call user map-setup
-map_start(); // !!
+map_start();
 window.onload = map_update;
 if (show_load_time) {
     console.log("Loading-time:", millis(), "ms");
