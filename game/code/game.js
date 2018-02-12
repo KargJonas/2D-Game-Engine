@@ -15,9 +15,10 @@
  *  every update. (update rate can be set in the
  *  settings-section in engine.js)
  *
- *  The "onkeypress" function is called when a key
- *  has been pressed. If you have to detect multiple
- *  keys pressed at once, you can use the "key_map[]"
+ *  You can use the "key_map[]" variable to determine
+ *  which keys are pressed at any time with
+ *  "key_map[your_key_num]". It will erturn true
+ *  or false.
  *
  *  There is also a "move" and a "move_collider"
  *  function. With the move function you can do two
@@ -38,6 +39,7 @@
 
 // Animations
 animations = [
+    // [posX, posY, frame1, frame2, frame3, etc..]
     [220, 200, 5, 6],
     [800, 200, 6, 5],
     [700, 100, 5, 6],
@@ -54,25 +56,14 @@ function animate_setup() {
 
 function animate_update() {
     player1.animate();  // Animate
-    player1.display();  // Show on screen
-    
-    for (var i = 0; i < animations.length; i++) {
-        anims[i].animate();
-        anims[i].display();
-    }
 }
 
-// Multiple keypresses
-// ( WASD control )
-onkeydown = onkeyup = function(e) {
-    key = e;
-    walk_frame++;
-    e = e || event;
-    key_map[e.keyCode] = e.type == 'keydown';
+function update() {
+    player1.display();  // Show on screen
 
     // Anti-speeding on diagonal walk
     if ((key_map[87] || key_map[83]) && (key_map[65] || key_map[68])) {
-        temp_speed = player_speed / 1.5;
+        temp_speed = player_speed / 1.005;
     } else {
         temp_speed = player_speed;
     }
@@ -80,20 +71,13 @@ onkeydown = onkeyup = function(e) {
     // WASD events
     if (key_map[87]) { // W
         player1.move_collider(0, -temp_speed);
-    } else if (key_map[83]) { // A
+    } else if (key_map[83]) { // S
         player1.move_collider(0, temp_speed);
     }
 
-    if (key_map[65]) { // S
+    if (key_map[65]) { // A
         player1.move_collider(-temp_speed, 0);
     } else if (key_map[68]) { // D
         player1.move_collider(temp_speed, 0);
     }
-    map_update();
 }
-
-// Single keypress
-// onkeypress = function(e) {
-//     console.log("Keycode:", e.keyCode);
-//     console.log("Keycode:", e);
-// }

@@ -44,16 +44,16 @@
  */
 
 // Settings
-const rows = 9,                          // Amount of texture-tiles lenghtwise
+const rows = 9,                           // Amount of texture-tiles lenghtwise
       columns = 13,                       // Amount of texture-tiles heightwise
       size = 80,                          // Resolution of the tiles ( pixels )
-      animation_speed = 200,              // Speed of animation-clock
+      animation_speed = 50,               // Speed of animation-clock ( the smaller the number - the faster )
       tile_path = "resources/tiles/",     // Path of tile-textures
       char_path = "resources/anims/",     // Path of char-tectures
       chars_amount = 6;                   // Amount of textures in the char-folder
 
 // Game settings
-const player_speed = 10,
+const player_speed = 2, // Don*t set to 1 if you have anti-speed on diagonal movement
       show_load_time = false,
       show_custom_error = true;
 
@@ -67,7 +67,7 @@ var cnv = document.getElementById("game"),
     player1,
     key_map = {},
     temp_speed, temp_pos_x, temp_pos_y,
-    frames_idle,
+    frames_idle, frame = 0,
     char_offset = size / 2,
     animation_frame = 0,
     walk_frame = 0, walk_last,
@@ -95,6 +95,8 @@ function map_start() {
         }
         // Chars need to be done by the user
         animate_setup();
+    } else {
+        console.log("Error: No animate_setup() function found.");
     }
 }
 
@@ -106,9 +108,10 @@ function map_update() {
         }
     }
     // Update animations
-    if (typeof animate_update === "function") {
-        animate_update();
+    for (var i = 0; i < animations.length; i++) {
+        anims[i].display();
     }
+    update();
 }
 
 // Set the texture of a tile
@@ -195,10 +198,31 @@ function animation () {
     }
 }
 
+// Get Multiple keypresses
+onkeypress = function() {
+    onkeydown = function(e) {
+        key_map[e.keyCode] = true;
+    }
+
+    onkeyup = function(e) {
+        key_map[e.keyCode] = false;
+    }
+}
+
 // Get time passed ( milliseconds )
 function millis() { return new Date() - start; }
 
 map_start();
 window.onload = map_update;
 if (show_load_time) { console.log("Loading-time:", millis(), "ms"); }
-setInterval(map_update, animation_speed);
+setInterval(function() {
+    frame++;
+    map_update();
+
+    if (frame % animation_speed == 0) {
+        for (var i = 0; i < animations.length; i++) {
+            animate_update();
+            anims[i].animate();
+        }
+    }
+}, 1);
