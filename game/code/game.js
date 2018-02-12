@@ -47,9 +47,11 @@ animations = [
     [500, 600, 5, 6]
 ];
 
-function animate_setup() {
+function setup() {
+    dustAndGreen.load_map();
+
     player1 = new char();
-    player1.setup(ctx.canvas.width / 2, ctx.canvas.height / 2);
+    player1.setup(520, 270);
     player1.frames_idle = [1, 2];   // The standart-animation in idle
     player1.frames_walk = [3, 4];   // A walking animation
 }
@@ -62,22 +64,22 @@ function update() {
     player1.display();  // Show on screen
 
     // Anti-speeding on diagonal walk
-    if ((key_map[87] || key_map[83]) && (key_map[65] || key_map[68])) {
-        temp_speed = player_speed / 1.005;
-    } else {
-        temp_speed = player_speed;
-    }
+    // if ((key_map[87] || key_map[83]) && (key_map[65] || key_map[68])) {
+    //     temp_speed = player_speed / 1.02;
+    // } else {
+    //     temp_speed = player_speed;
+    // }
 
     // WASD events
     if (key_map[87]) { // W
-        player1.move_collider(0, -temp_speed);
+        player1.move_collider(0, -player_speed);
     } else if (key_map[83]) { // S
-        player1.move_collider(0, temp_speed);
+        player1.move_collider(0, player_speed);
     }
 
     if (key_map[65]) { // A
-        player1.move_collider(-temp_speed, 0);
+        player1.move_collider(-player_speed, 0);
     } else if (key_map[68]) { // D
-        player1.move_collider(temp_speed, 0);
+        player1.move_collider(player_speed, 0);
     }
 }
