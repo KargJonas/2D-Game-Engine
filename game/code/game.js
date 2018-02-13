@@ -68,6 +68,7 @@ function animate_update() {
 }
 
 function update() {
+    sheep.move_collider(millis());
     sheep.display();
     player.display();  // Show on screen (Should be last in order to be in front)
 
