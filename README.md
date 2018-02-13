@@ -1,6 +1,6 @@
 # 2D-Game-Engine
 **Made by Jonas Karg 2018**<br>
-A standalone 2D Game Engine based on JavaScript - mainly made for topdown-browsergames<br>
+A standalone 2D Game Engine based on JavaScript - mainly made for topdown browsergames<br>
 But it can be configured for basically anyting. (e.g. a plattformer, etc..)
 
 ## Features:
@@ -11,7 +11,9 @@ But it can be configured for basically anyting. (e.g. a plattformer, etc..)
 - A character system
 <hr>
 
-**This library is nowhere near to completion, so don't expect too much of it..**
+This library is opensource and can be used by anyone altough I'd appreciate a shoutout  :D
+
+**It is nowhere near to completion, so don't expect too much of it..**
 
 See the 11.01.2018 version here:
 http://webspot.ddns.me/game/

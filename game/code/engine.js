@@ -1,46 +1,7 @@
-/*  A 2D-Game-library by Jonas Karg 2018
+/*  A 2D-Game-library by Jonas Karg ( Project initiated on 4 February 2018 )
  *
- *  This library was designed for top-down
- *  games but it can be used for a lot of
- *  different stuff (e.g.P platformers, etc..)
- *
- *  It provides the ability to load maps from
- *  2-dimensional arrays ("map" and "map_overlay")
- *  with the numbers of the corresponding images
- *  in folders, you specefy. The map is then
- *  loaded into a grid of "tiles". Its possible
- *  to have multiple layers of texture.
- *
- *  The textures in the texture-folders have to
- *  be named cronologically in numbers.
- *  (e.g.: 1.png, 2.png, 3.png, ...)
- *  No number should be skippen otherwise an
- *  error will occur.
- *
- *  In the "walls" array you can say, which
- *  "tiles" are able to be passed by the
- *  player. ("00" for passable "01" for
- *  non-passable) (Collider)
- *
- *  players, characters and NPCs can be created
- *  with the following code:
- *  
- *  yourPlayerName = new player();
- *  yourPlayerName.setup(ctx.canvas.width / 2, ctx.canvas.height / 2);
- *  yourPlayerName.frames_walk = [3, 4];
- *
- *  The parameters in the yourPlayerName.setup
- *  function is the position, where the player
- *  will be spawned by default.
- *  The variable "yourPlayerName.frames_walk" is the array of
- *  frames used for the player-animation when walking.
- *  You can add as many as you want.
- *  The variable "yourPlayerName.frames_idle" is the array of
- *  frames used for the player-animation in idle.
- *  You can add as many as you want.
- *
- *  You have to preset some stuff in the "Settings" below.
- *  You can play around in the "Game Settings" if you wish to.
+ *  This library is opensource and can be used by anyone altought I'd
+ *  appreciate a shoutout  :D
  */
 
 // Settings
