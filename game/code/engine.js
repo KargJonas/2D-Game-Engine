@@ -54,17 +54,19 @@ const canvas_id = "game", // The name of HTML-Canvas element we are drawing on
       animation_speed = 50, // Speed of animation-clock ( the smaller the number - the faster )
       tile_path = "resources/tiles/",   // Path of tile-textures
       char_path = "resources/anims/",   // Path of char-tectures
-      chars_amount = 9, // Amount of textures in the char-folder // !!
+      chars_amount = 13, // Amount of textures in the char-folder // !!
       tiles_amount = 21, // Amount of tile-textures ( for the map ) // !!
       update_speed = 1; // The time between refreshing map, etc..
 
 // Game settings
 const player_speed = 2,         // Don't set to 1 if you have anti-speed on diagonal movement
       show_load_time = false,   // Show how long it took to load the game in the console
-      show_custom_error = true; // Show custom error messages ( Might be useful for new JS users )
+      show_custom_error = true, // Show custom error messages ( Might be useful for new JS users )
+      show_fps = true; // Show custom error messages ( Might be useful for new JS users )
 
 // Some variables
-var cnv = document.getElementById("game"),         // Getting the HTML-Canvas element
+var cnv = document.getElementById("game"), // Getting the HTML-Canvas element
+    fps = document.getElementById("fps"),  // Getting the FPS element
     ctx = cnv.getContext("2d", {antialias: true}), // Createing a 2D contect for the canvas
     map = [],     // A 2-dimensional array of all tiles on the map ( set in maps.js on load in map_start() )
     map_overlay,  // A 2-dimensional array of all overlay-tiles    ( set in maps.js on load in map_start() )
@@ -93,17 +95,12 @@ function map_start() {
         tiles[i].src = tile_path + (i + 1) + ".png";
     }
     // Set up characters/animations
-    if (typeof setup === "function") {
-        // Setting up animations
-        for (var i = 0; i < animations.length; i++) {
-            anims[i] = new animation();
-            anims[i].setup(animations[i][0], animations[i][1]);
-            for (var a = 0; a < animations[i].length - 2; a++) {
-                anims[i].frame_pattern[a] = animations[i][a + 2];
-            }
+    for (var i = 0; i < animations.length; i++) {
+        anims[i] = new animation();
+        anims[i].setup(animations[i][0], animations[i][1]);
+        for (var a = 0; a < animations[i].length - 2; a++) {
+            anims[i].frame_pattern[a] = animations[i][a + 2];
         }
-    } else {
-        console.log("Engine-Error: No setup() function found.\nTypo?");
     }
 }
 
@@ -119,6 +116,10 @@ function map_update() {
         anims[i].display();
     }
     update();
+    
+    if (show_fps && frame % 10 == 0) {
+        fps.innerHTML = "FPS: " + Math.floor(frame / (millis() / 1000));
+    }
 }
 
 // Set the texture of a tile
@@ -191,9 +192,10 @@ function char() {
     this.move_collider = function(x, y) {
         temp_pos_x = Math.floor((this.x + x) / tile_size);
         temp_pos_y = Math.floor((this.y + y) / tile_size);
-        if (walls[temp_pos_y][temp_pos_x] == 0) {
+        if (walls[temp_pos_y][temp_pos_x] != 1) {
             this.move(x, y, false);
         }
+        wall_event(walls[temp_pos_y][temp_pos_x]);
     }
 }
 

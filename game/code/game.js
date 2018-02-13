@@ -40,11 +40,11 @@
 // Animations
 animations = [
     // [posX, posY, frame1, frame2, frame3, etc..]
-    [220, 200, 5, 6],
-    [800, 200, 6, 5],
-    [700, 100, 5, 6],
-    [750, 090, 6, 5],
-    [500, 500, 5, 6]
+    [220, 200, 9, 10],
+    [800, 200, 10, 9],
+    [700, 100, 9, 10],
+    [750, 090, 10, 9],
+    [500, 500, 9, 10]
 ];
 
 function setup() {
@@ -58,8 +58,8 @@ function setup() {
 
     sheep = new char();
     sheep.setup(200, 200);
-    sheep.frames_idle = [7];
-    sheep.frames_walk = [8, 9];
+    sheep.frames_idle = [11];
+    sheep.frames_walk = [12, 13];
 }
 
 function animate_update() {
@@ -68,16 +68,16 @@ function animate_update() {
 }
 
 function update() {
-    sheep.move_collider(millis());
     sheep.display();
     player.display();  // Show on screen (Should be last in order to be in front)
 
     // Anti-speeding on diagonal walk
     // if ((key_map[87] || key_map[83]) && (key_map[65] || key_map[68])) {
-    //     temp_speed = player_speed / 1.02;
-    // } else {
-    //     temp_speed = player_speed;
-    // }
+    if ((key_map[87] && (key_map[65] || key_map[68])) || (key_map[83] && (key_map[65] || key_map[68]))) {
+        temp_speed = player_speed / 0.7;
+    } else {
+        temp_speed = player_speed;
+    }
 
     // WASD events
     if (key_map[87]) { // W
@@ -90,5 +90,20 @@ function update() {
         player.move_collider(-player_speed, 0);
     } else if (key_map[68]) { // D
         player.move_collider(player_speed, 0);
+    }
+}
+
+function wall_event(wall_type) { // Called when the player steps on a wall and gives the wall-type
+    switch (wall_type) {
+        case 2:
+            dust.load_map();
+            break;
+            
+        case 3:
+            dustAndGreen.load_map();
+            break;
+            
+        default:
+            break;
     }
 }
