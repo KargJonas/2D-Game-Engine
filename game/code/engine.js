@@ -222,13 +222,14 @@ function animation () {
 }
 
 // ** Keyevents ( W, A, S, D ) **
-onkeypress = function() {
+onkeypress = function(evt) {
     onkeydown = function(e) {
         key_map[e.keyCode] = true; // RAM inefficient..
     }
     onkeyup = function(e) {
         key_map[e.keyCode] = false;
     }
+    key_pressed(evt);
 }
 
 // Get time passed ( milliseconds )

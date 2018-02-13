@@ -52,9 +52,9 @@ function setup() {
     dustAndGreen.load_map();
 
     player = new char();
-    player.setup(520, 270);
-    player.frames_idle = [1, 2];   // The standart-animation in idle
-    player.frames_walk = [3, 4];   // A walking animation
+    player.setup(520, 270);         // Params in setup is spawnpoint
+    player.frames_idle = [1, 2];    // The standart-animation in idle
+    player.frames_walk = [3, 4];    // A walking animation
 
     sheep = new char();
     sheep.setup(200, 200);
@@ -90,6 +90,12 @@ function update() {
         player.move_collider(-player_speed, 0);
     } else if (key_map[68]) { // D
         player.move_collider(player_speed, 0);
+    }
+}
+
+function key_pressed(e) {
+    if (e.keyCode == 32) {
+        console.log("I was called only once!");
     }
 }
 
