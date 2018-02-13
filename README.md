@@ -15,5 +15,5 @@ This library is opensource and can be used by anyone altough I'd appreciate a sh
 
 **It is nowhere near to completion, so don't expect too much of it..**
 
-See the 11.01.2018 version here:
+See the 11.01.2018 versionc here live:
 http://webspot.ddns.me/game/

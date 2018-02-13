@@ -44,7 +44,7 @@ animations = [
     [800, 200, 6, 5],
     [700, 100, 5, 6],
     [750, 090, 6, 5],
-    [500, 600, 5, 6]
+    [500, 500, 5, 6]
 ];
 
 function setup() {
@@ -60,12 +60,10 @@ function setup() {
     sheep.setup(200, 200);
     sheep.frames_idle = [7];
     sheep.frames_walk = [8, 9];
-    
-    console.log(sheep);
 }
 
 function animate_update() {
-    player.animate();  // Animate
+    player.animate();   // Animate
     sheep.animate();
 }
 

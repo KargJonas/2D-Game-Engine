@@ -1,7 +1,49 @@
 /*  A 2D-Game-library by Jonas Karg ( Project initiated on 4 February 2018 )
  *
  *  This library is opensource and can be used by anyone altought I'd
- *  appreciate a shoutout  :D
+ *  apprecciate a shoutout  :D
+ *
+ *  This library was designed for top-down
+ *  games but it can be used for a lot of
+ *  different stuff (e.g.P platformers, etc..)
+ *
+ *  It provides the ability to load maps from
+ *  2-dimensional arrays ("map" and "map_overlay")
+ *  with the numbers of the corresponding images
+ *  in folders, you specefy. The map is then
+ *  loaded into a grid of "tiles". Its possible
+ *  to have multiple layers of texture.
+ *
+ *  The textures in the texture-folders have to
+ *  be named cronologically in numbers.
+ *  (e.g.: 1.png, 2.png, 3.png, ...)
+ *  No number should be skippen otherwise an
+ *  error will occur.
+ *
+ *  In the "walls" array you can say, which
+ *  "tiles" are able to be passed by the
+ *  player. ("00" for passable "01" for
+ *  non-passable) (Collider)
+ *
+ *  players, characters and NPCs can be created
+ *  with the following code:
+ *  
+ *  yourPlayerName = new player();
+ *  yourPlayerName.setup(ctx.canvas.width / 2, ctx.canvas.height / 2);
+ *  yourPlayerName.frames_walk = [3, 4];
+ *
+ *  The parameters in the yourPlayerName.setup
+ *  function is the position, where the player
+ *  will be spawned by default.
+ *  The variable "yourPlayerName.frames_walk" is the array of
+ *  frames used for the player-animation when walking.
+ *  You can add as many as you want.
+ *  The variable "yourPlayerName.frames_idle" is the array of
+ *  frames used for the player-animation in idle.
+ *  You can add as many as you want.
+ *
+ *  You have to preset some stuff in the "Settings" below.
+ *  You can play around in the "Game Settings" if you wish to.
  */
 
 // Settings
@@ -12,7 +54,8 @@ const canvas_id = "game", // The name of HTML-Canvas element we are drawing on
       animation_speed = 50, // Speed of animation-clock ( the smaller the number - the faster )
       tile_path = "resources/tiles/",   // Path of tile-textures
       char_path = "resources/anims/",   // Path of char-tectures
-      chars_amount = 9, // Amount of textures in the char-folder
+      chars_amount = 9, // Amount of textures in the char-folder // !!
+      tiles_amount = 21, // Amount of tile-textures ( for the map ) // !!
       update_speed = 1; // The time between refreshing map, etc..
 
 // Game settings
@@ -28,11 +71,12 @@ var cnv = document.getElementById("game"),         // Getting the HTML-Canvas el
     walls,        // A 2-dimensional array of all walls of the map ( set in maps.js on load in map_start() )
     animations,   // A multi-dimensional array with information of all static animations ( set in your game file (game.js) )
     anims = [],   // A multi-dimensional array with the frames of all static animations  ( set in automatically )
-    tiles_amount, // Amount of textures            ( set automatically on run of map_start() in engine.js )
     start,        // The time on start of the game ( set automatically on run of map_start() in engine.js )
     tiles = [],   // Array of texture-images       ( set automatically on load in engine.js )
     key_map = {}, // Array of all keys pressed     ( set automatically on keypress in engine.js )
     frame = 0,    // Framecount ( set in the setInterval function in engine.js )
+    map_frame = 0,     // Map frame
+    map_overlay_frame = 0, // Overlay frame
     char_offset = tile_size / 2; // The offset chars are shifted by to center them
 
 // Initiate the game
@@ -40,8 +84,8 @@ function map_start() {
     start = new Date(); // Has to be first to execute
     maps_setup(); // Sets up the map-objects ( in maps.js )
     setup();
-    tiles_amount = Math.max(...([].concat([].concat(...map),
-                                          [].concat(...map_overlay)))); // Get the amount of textures for the map
+    // tiles_amount = Math.max(...([].concat([].concat(...map[0]),
+    //                                       [].concat(...map_overlay)))); // Get the amount of textures for the map
     ctx.canvas.width = tile_columns * tile_size;
     ctx.canvas.height = tile_rows * tile_size;
     for (var i = 0; i < tiles_amount; i++) {
@@ -59,7 +103,7 @@ function map_start() {
             }
         }
     } else {
-        console.log("Error: No setup() function found.");
+        console.log("Engine-Error: No setup() function found.\nTypo?");
     }
 }
 
@@ -79,11 +123,11 @@ function map_update() {
 
 // Set the texture of a tile
 function tile_set(x, y) {
-    tile_nr = map[y][x];
+    tile_nr = map[map_frame][y][x];
     if (tile_nr > 0 && tile_nr < tiles_amount + 1) {
         ctx.drawImage(tiles[tile_nr - 1], x * tile_size, y * tile_size);
     }
-    tile_nr = map_overlay[y][x];
+    tile_nr = map_overlay[map_overlay_frame][y][x];
     if (tile_nr > 0 && tile_nr < tiles_amount + 1) {
         ctx.drawImage(tiles[tile_nr - 1], x * tile_size, y * tile_size);
     }
@@ -201,6 +245,14 @@ setInterval(function() {
 
     if (frame % animation_speed == 0) {
         for (var i = 0; i < animations.length; i++) {
+            map_frame++;
+            map_overlay_frame++;
+            if (map_frame >= map.length) {
+                map_frame = 0;
+            }
+            if (map_overlay_frame >= map_overlay.length) {
+                map_overlay_frame = 0;
+            }
             animate_update();
             anims[i].animate();
         }
