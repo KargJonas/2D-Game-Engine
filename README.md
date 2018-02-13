@@ -11,8 +11,9 @@ But it can be configured for basically anyting. (e.g. a plattformer, etc..)
 - A character system
 <hr>
 
-This library is opensource and can be used by anyone altough I'd appreciate a shoutout  :D
+![An example game](https://github.com/KargJonas/2D-Game-Engine/blob/master/dev/Media/Preview.PNG)
 
+This library is opensource and can be used by anyone altough I'd appreciate a shoutout  :D<br>
 **It is nowhere near to completion, so don't expect too much of it..**
 
 See the 11.01.2018 versionc here live:
