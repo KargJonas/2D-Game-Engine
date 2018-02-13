@@ -11,9 +11,10 @@ But it can be configured for basically anyting. (e.g. a plattformer, etc..)
 - A character system
 <hr>
 
-## An example game:<br>
+## An example game:
 The plants, water, player and the sheep are animated.
 ![An example game](https://github.com/KargJonas/2D-Game-Engine/blob/master/dev/Media/Preview.PNG)
+<hr>
 
 This library is opensource and can be used by anyone altough I'd appreciate a shoutout  :D<br>
 **It is nowhere near to completion, so don't expect too much of it..**
