@@ -116,7 +116,7 @@ function map_update() {
         anims[i].display();
     }
     update();
-    
+
     if (show_fps && frame % 10 == 0) {
         fps.innerHTML = "FPS: " + Math.floor(frame / (millis() / 1000));
     }
@@ -138,7 +138,6 @@ function map_template() {
     this.map = [];
     this.map_overlay = [];
     this.walls = [];
-
     this.load_map = function() {
         map = this.map;
         map_overlay = this.map_overlay;
@@ -153,8 +152,10 @@ function char() {
     this.walk_frame = 0;
     this.frames_idle = [];
     this.frames_walk = [];
+    this.walk_path = [];
     this.imgs = [];
     this.last_walk;
+    this.firstrun = true;
     this.setup = function(x, y) {
         this.x = x;
         this.y = y;
@@ -169,6 +170,7 @@ function char() {
         this.walk_frame++;
         if (this.idle_frame > this.frames_idle.length - 1) { this.idle_frame = 0; }
         if (this.walk_frame > this.frames_walk.length - 1) { this.walk_frame = 0; }
+        this.steer = false;
     }
     this.display = function() {
         if (millis() - this.last_walk < 300) {
@@ -179,6 +181,7 @@ function char() {
     }
     // Movement
     this.move = function(x, y, mode) {
+        this.steer = true;
         if (mode) {
             this.x = parseInt(x);  // gotta be int otherwise, the image could be
             this.y = parseInt(y);  // displayed on half a pixel => blurred image
@@ -197,8 +200,21 @@ function char() {
         }
         wall_event(walls[temp_pos_y][temp_pos_x]);
     }
+    // Moving characters to positions instead of teleporting them
+    this.animate_move = function(x, y) {
+        // y = k * x + d
+        if (this.firstrun) {
+            this.firstrun = false;
+            k = (y - this.y) / (x - this.x);
+        }
+        if (this.x != x && this.y != y) {
+            this.move(player_speed / 2, k * player_speed / 2);
+        } else {
+            this.firstrun = true;
+            return true;
+        }
+    }
 }
-
 // Animation
 function animation () {
     this.frame = 0;
@@ -222,14 +238,13 @@ function animation () {
 }
 
 // ** Keyevents ( W, A, S, D ) **
-onkeypress = function(evt) {
+onkeypress = function() {
     onkeydown = function(e) {
         key_map[e.keyCode] = true; // RAM inefficient..
     }
     onkeyup = function(e) {
         key_map[e.keyCode] = false;
     }
-    key_pressed(evt);
 }
 
 // Get time passed ( milliseconds )

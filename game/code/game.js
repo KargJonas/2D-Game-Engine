@@ -54,10 +54,14 @@ function setup() {
     player = new char();
     player.setup(520, 270);         // Params in setup is spawnpoint
     player.frames_idle = [1, 2];    // The standart-animation in idle
-    player.frames_walk = [3, 4];    // A walking animation
+    player.frames_walk = [3, 4];
+//    player.frames_walk_left = [6];
+//    player.frames_walk_right = [5];
+//    player.frames_walk_up = [8, 7];
+//    player.frames_walk_down = [3, 4];
 
     sheep = new char();
-    sheep.setup(200, 200);
+    sheep.setup(100, 100);
     sheep.frames_idle = [11];
     sheep.frames_walk = [12, 13];
 }
@@ -68,6 +72,7 @@ function animate_update() {
 }
 
 function update() {
+    sheep.animate_move(400, 400);
     sheep.display();
     player.display();  // Show on screen (Should be last in order to be in front)
 
@@ -90,12 +95,6 @@ function update() {
         player.move_collider(-player_speed, 0);
     } else if (key_map[68]) { // D
         player.move_collider(player_speed, 0);
-    }
-}
-
-function key_pressed(e) {
-    if (e.keyCode == 32) {
-        console.log("I was called only once!");
     }
 }
 
