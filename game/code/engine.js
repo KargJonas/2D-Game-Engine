@@ -94,6 +94,7 @@ function map_start() {
         tiles[i] = new Image();
         tiles[i].src = tile_path + (i + 1) + ".png";
     }
+    
     // Set up characters/animations
     for (var i = 0; i < animations.length; i++) {
         anims[i] = new animation();
@@ -116,7 +117,6 @@ function map_update() {
         anims[i].display();
     }
     update();
-
     if (show_fps && frame % 10 == 0) {
         fps.innerHTML = "FPS: " + Math.floor(frame / (millis() / 1000));
     }
@@ -124,7 +124,7 @@ function map_update() {
 
 // Set the texture of a tile
 function tile_set(x, y) {
-    tile_nr = map[map_frame][y][x];
+    tile_nr = map[map_frame][y][x]; // not allowing a single frame
     if (tile_nr > 0 && tile_nr < tiles_amount + 1) {
         ctx.drawImage(tiles[tile_nr - 1], x * tile_size, y * tile_size);
     }
@@ -138,6 +138,7 @@ function map_template() {
     this.map = [];
     this.map_overlay = [];
     this.walls = [];
+
     this.load_map = function() {
         map = this.map;
         map_overlay = this.map_overlay;
@@ -165,6 +166,7 @@ function char() {
             this.imgs[i].src = char_path + (i + 1) + ".png";
         }
     }
+    
     this.animate = function() {
         this.idle_frame++;
         this.walk_frame++;
@@ -172,6 +174,7 @@ function char() {
         if (this.walk_frame > this.frames_walk.length - 1) { this.walk_frame = 0; }
         this.steer = false;
     }
+    
     this.display = function() {
         if (millis() - this.last_walk < 300) {
             ctx.drawImage(this.imgs[this.frames_walk[this.walk_frame] - 1], this.x - char_offset, this.y - char_offset);
@@ -179,6 +182,7 @@ function char() {
             ctx.drawImage(this.imgs[this.frames_idle[this.idle_frame] - 1], this.x - char_offset, this.y - char_offset);
         }
     }
+    
     // Movement
     this.move = function(x, y, mode) {
         this.steer = true;
@@ -191,6 +195,7 @@ function char() {
         }
         this.last_walk = millis();  // for walk animation
     }
+    
     // Colision detection
     this.move_collider = function(x, y) {
         temp_pos_x = Math.floor((this.x + x) / tile_size);
@@ -200,6 +205,7 @@ function char() {
         }
         wall_event(walls[temp_pos_y][temp_pos_x]);
     }
+    
     // Moving characters to positions instead of teleporting them
     this.animate_move = function(x, y) {
         // y = k * x + d
@@ -215,6 +221,7 @@ function char() {
         }
     }
 }
+
 // Animation
 function animation () {
     this.frame = 0;
@@ -262,16 +269,16 @@ setInterval(function() {
     map_update();
 
     if (frame % animation_speed == 0) {
+        animate_update();
+        map_frame++;
+        map_overlay_frame++;
+        if (map_frame >= map.length) {
+            map_frame = 0;
+        }
+        if (map_overlay_frame >= map_overlay.length) {
+            map_overlay_frame = 0;
+        }
         for (var i = 0; i < animations.length; i++) {
-            map_frame++;
-            map_overlay_frame++;
-            if (map_frame >= map.length) {
-                map_frame = 0;
-            }
-            if (map_overlay_frame >= map_overlay.length) {
-                map_overlay_frame = 0;
-            }
-            animate_update();
             anims[i].animate();
         }
     }
