@@ -1,0 +1,57 @@
+* {
+  font-family: "bit";
+}
+
+#fps {
+  min-width: 140px;
+  font-size: 22px;
+  color: #fff;
+  background-color: #000;
+  position: absolute;
+  float: left;
+  padding: 3px;
+  margin: 10px;
+  user-select: none;
+}
+
+#fullscreen {
+  position: absolute;
+  right: 0%;
+  margin: 10px;
+  user-select: none;
+}
+
+.max_anim {
+  animation-name: max;
+  animation-duration: .4s;
+  animation-iteration-count: infinite;
+}
+
+.min_anim {
+  animation-name: min;
+  animation-duration: .4s;
+  animation-iteration-count: infinite;
+}
+
+@keyframes max {
+  from {
+    content: url("resources/ui/max_1.png");
+  }
+  to {
+    content: url("resources/ui/max_2.png");
+  }
+}
+
+@keyframes min {
+  from {
+    content: url("resources/ui/min_1.png");
+  }
+  to {
+    content: url("resources/ui/min_2.png");
+  }
+}
+
+@font-face {
+  font-family: "bit";
+  src: url("resources/ui/slkscre.ttf");
+}

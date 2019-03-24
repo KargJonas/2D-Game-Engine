@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head lang="en">
+  <meta charset="UTF-8">
+  <title>Game</title>
+  <meta content="HTML test for a 2D game library by Jonas Karg">
+  <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' />
+  <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body style="padding:0%; margin:0%; background-color:#111; overflow:hidden;">
+  <div>
+    <!-- FPS-Conter -->
+    <p id="fps"></p>
+
+    <!-- Toggle-Fullscreen -->
+    <img src="resources/ui/max_2.png" id="fullscreen" onmouseover="fullscreen_hover=true;"
+      onmouseout="fullscreen_hover=false;" onclick="toggle_fullScreen()">
+
+    <!-- Game -->
+    <center><canvas id="game" width="1920" height="1080"></canvas></center>
+  </div>
+
+  <!-- JS -->
+  <script type="text/javascript" src="maps.js"></script>
+  <script type="text/javascript" src="game.js"></script>
+  <script type="text/javascript" src="../../src/engine.js"></script>
+</body>
+
+</html>
