@@ -13,7 +13,7 @@ But it can be configured for basically anyting. (e.g. a plattformer, etc..)
 
 ## An example game:
 The plants, water, player and the sheep are animated.<br>
-![An example game](https://github.com/KargJonas/2D-Game-Engine/blob/master/dev/Media/Preview.PNG)
+![An example game](example-img.png)
 <hr>
 
 This library is opensource and can be used by anyone altough I'd appreciate a shoutout  :D<br>
