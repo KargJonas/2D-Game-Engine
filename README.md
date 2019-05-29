@@ -1,3 +1,5 @@
+> Warning! I wrote this quite a while ago. I would not recommend you actually use it for anythin serious.
+
 # 2D-Game-Engine
 **Made by Jonas Karg 2018**<br>
 A standalone 2D Game Engine based on JavaScript - mainly made for topdown browsergames<br>
