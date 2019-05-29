@@ -1,4 +1,4 @@
-> Warning! I wrote this quite a while ago. I would not recommend you actually use it for anythin serious.
+> Warning! I wrote this quite a while ago. I would not recommend you actually use it for anything serious.
 
 # 2D-Game-Engine
 **Made by Jonas Karg 2018**<br>
